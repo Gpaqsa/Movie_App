@@ -1,59 +1,56 @@
-import React from 'react'
-// import {Blog, Footer, Features, Header, Possibility, WhatGPT3} from './container';
-// import { Brand, CTA, Navbar } from './components';
-import { useEffect } from 'react';
-import './App.css';
+import React, { useState, useEffect } from "react";
+
+import MovieCard from "./components/MovieCard";
 import SearchIcon from "./search.svg";
+import "./App.css";
 
-// 3e1208d
-
-const API_URL = 'http://www.omdbapi.com?apikey=3e1208d';
-
-const movie1 = {
-  "Title": "Shrek Retold",
-  "Type": "movie",
-  "Year": "2018",
-  "imdbID": "tt9334162",
-  "Poster": "N/A"
-}
+const API_URL = "http://www.omdbapi.com?apikey=b6003d8a";
 
 const App = () => {
-  const searchMovies = async (title) => {
-    const response = await fetch(`${API_URL}&s=${title}`)
-    const data = await response.json()
-    console.log(data.Search)
-  }
+  const [searchTerm, setSearchTerm] = useState("");
+  const [movies, setMovies] = useState([]);
+
   useEffect(() => {
-    searchMovies("Shrek")
-  }, [])
+    searchMovies("Batman");
+  }, []);
+
+  const searchMovies = async (title) => {
+    const response = await fetch(`${API_URL}&s=${title}`);
+    const data = await response.json();
+
+    setMovies(data.Search);
+  };
 
   return (
-    <div className='app'>
+    <div className="app">
+      <h1>MovieLand</h1>
 
-      <h1>App</h1>
-      <section className='search'>
-        <input value="Shrek" placeholder="Search for movies" onChange={() => { }} />
-        <img src={SearchIcon} alt="search" onClick={() => { }} />
-      </section>
-
-      <div className='container'>
-        <div className='movie'>
-          <div>
-            <p>{movie1.Year}</p>
-          </div>
-
-          <div>
-            <img src={movie1.Poster !== 'N/A' ? movie1.Poster : "https://via.placeholder.com/400"} alt={movie1.Title} />
-          </div>
-
-          <div>
-            <span>{movie1.Type}</span>
-            <h3>{movie1.Title}</h3>
-          </div>
-        </div>
+      <div className="search">
+        <input
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search for movies"
+        />
+        <img
+          src={SearchIcon}
+          alt="search"
+          onClick={() => searchMovies(searchTerm)}
+        />
       </div>
-    </div>
-  )
-}
 
-export default App
+      {movies?.length > 0 ? (
+        <div className="container">
+          {movies.map((movie) => (
+            <MovieCard movie={movie} />
+          ))}
+        </div>
+      ) : (
+        <div className="empty">
+          <h2>No movies found</h2>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
